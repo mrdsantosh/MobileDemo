@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>APTRA Scheduler</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet"
+	href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
+<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+<script
+	src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
+<script
+	src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.10.0/jquery.validate.min.js"></script>
+
+<script type="text/javascript">
+$(function() {
+	setTimeout(hideSplash, 2000);
+});
+
+$ (function(){
+	setTimeout(function(){
+	    $.mobile.changePage("#home", "fade");
+	}, 3000);
+});
+</script>
+
+</head>
+
+<body>
+	<div data-role="page" data-theme="b" id="hideSplash"
+		style="background-color: #fff;">
+		<div class="splash">
+			<img
+				src="http://jquerymobile.com/demos/1.0a4.1/docs/_assets/images/jquery-logo.png"
+				alt="splash" />
+		</div>
+	</div>
+	<div data-role="page" data-theme="b" id="home">
+		<div data-role="header">
+			<h1>APTRA Scheduler</h1>
+		</div>
+		<div data-role="content">
+			<div data-role="content">
+				<ul data-role="listview" data-inset="true" data-theme="c"
+					data-dividertheme="b">
+					<li data-role="list-divider">Overview</li>
+					<li><a href="newapp.html" data-ajax="false">New Appointment</a></li>
+					<li><a href="bookedapp.html">Booked Appointment</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

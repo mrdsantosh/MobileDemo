@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>APTRA Scheduler</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
+<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
+<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.10.0/jquery.validate.min.js"></script>
+<script type="text/javascript" src="js/aptrascheduler.js"></script>
+<link rel="stylesheet" href="css/aptrascheduler.css" />
+
+<script type="text/javascript">
+	$("#servicesPage").live("pageshow", 
+		function() {
+			var params = getParams(window.location.href);
+			var id = params['id'];
+			$("#locId").val(id);
+			
+			$.mobile.showPageLoadingMsg();
+			$.get("http://localhost:8082/spring-ws-client/dispatcher/showServices/" + id, {}, function(data) {
+				$.mobile.hidePageLoadingMsg();
+				var s = "";
+				$.each(data, function(i, item) {
+					s +='<input name="sgId" id="sgId" type="hidden" value="' + item.id + '" />';
+					$.each(item.subGroups, function(j, item1) {
+						s +='<div data-role="collapsible"><h3>' + item1.name + '</h3>';
+						$.each(item1.services, function(k, item2) {
+							s += '<fieldset data-role="controlgroup">';
+							s += '<input type="checkbox" name="services" id="services" class="custom" value="' + item2.id + '" />';
+							s += '<label for="services">' + item2.name + '</label></fieldset>';
+						})
+						s +='</div>';
+					})
+				});
+				$("#serviceList").html(s); 
+				$(".ui-page").trigger("create");
+			}, "json");
+	});
+	
+	$(document).ready(function() {
+		$('#form_submit').submit(function() {
+	        var $fields = $(this).find('input[name="services"]:checked');
+	        if (!$fields.length) {
+	            alert('Please select at-least one service!');
+	            return false; // The form will *not* submit
+	        }
+	});
+		
+	$("#form_submit").validate({ 
+		    rules: { 
+	            "phone": { 
+	                minlength: 10
+	            }
+	    	}, 
+	    	messages: { 
+	           	"phone": "Please enter 10 digits.",
+	           	"services": "You must select at least one service!"
+	    	} 
+		});
+	});
+</script>
+</head>
+<body>
+	<div data-role="page" id="servicesPage" data-add-back-btn="true">
+		<div data-theme="c" data-role="header">
+			<h1>APTRA Scheduler</h1>
+			<a href="#" data-role="button" data-rel="back" data-icon="arrow-l" data-theme="c">Back</a>
+			<!--a href="index.html" data-role="button" data-icon="arrow-r" data-iconpos="right" data-theme="c" rel="external">Next</a-->
+		</div>
+		<div data-role="content">
+			<form data-ajax="false" method="get" action="timeslots.html" id="form_submit">
+    			<h2>Interested in (services)*:</h2>
+				<div data-role="collapsible-set" data-theme="c" data-content-theme="d" id="serviceList"></div>
+				<div data-role="fieldcontain">
+					<label for="name">Name*:</label>
+	    			<input type="text" name="name" id="name" class="required" />
+	    			<label for="email">Email*:</label>
+	    			<input type="text" name="email" id="email" class="required email" />
+	    			<label for="phone">Phone (prefix country code):</label>
+	    			<input type="text" name="phone" id="phone" class="number" />
+	    			<input type="hidden" name="locId" id="locId" />
+    			</div>
+				<button data-theme="b" id="submit" type="submit">Next</button>
+			</form>
+		</div>
+		<div data-role="footer">
+			<h4>APTRA Scheduler</h4>
+		</div>
+	</div>
+</body>
+</html>

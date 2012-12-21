@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>APTRA Scheduler</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
+<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
+<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.10.0/jquery.validate.min.js"></script>
+<script type="text/javascript" src="js/aptrascheduler.js"></script>
+
+<script type="text/javascript">
+	$("#timeslotsPage").live("pageshow",
+		function() {
+			var params = getParams(window.location.href);
+			var locId = params['locId'];
+			var sgId = params['sgId'];
+			var services = params['services'];
+			
+			$("#locId").val(locId);
+			$("#sgId").val(sgId);
+			$("#services").val(services);
+			$("#name").val(params['name']);
+			$("#email").val(params['email']);
+			$("#phone").val(params['phone']);
+			
+			$.mobile.showPageLoadingMsg();
+			$.get("http://localhost:8082/spring-ws-client/dispatcher/showTimeslots/" + locId + "/" + sgId + "/" + services , {}, function(data) {
+				$.mobile.hidePageLoadingMsg();
+				var s = "";
+				$.each(data, function(i, item) {
+					s +='<div data-role="collapsible"><h3>' + i + '</h3>';
+					$.each(item, function(k, item1) {
+						s += '<fieldset data-role="controlgroup">';
+						s += '<input name="time" id="time" type="radio" value="' + k + '" /><label for="time">' + item1 + '</label></fieldset>';
+					})
+					s +='</div>';
+				});
+				$("#timeSlots").html(s);
+				$(".ui-page").trigger("create"); 
+		}, "json");
+	});
+	
+	$(document).ready(function() {
+		$('input[type=radio]').live('change', function(e) {
+		    //$.mobile.changePage("#confPage", {transition: "slide"});
+		    $("#form_submit").submit();
+		});
+	});
+</script>
+</head>
+<body>
+	<div data-role="page" id="timeslotsPage" data-add-back-btn="true">
+		<div data-theme="c" data-role="header">
+			<h1>APTRA Scheduler</h1>
+			<a href="#" data-role="button" data-rel="back" data-icon="arrow-l" data-theme="c">Back</a>
+		</div>
+		<div data-role="content">
+			<form data-ajax="false" method="get" action="confirmation.html" id="form_submit">
+				<div data-role="collapsible-set" data-theme="c" data-content-theme="d" id="timeSlots"></div>
+				<input type="hidden" name="locId" id="locId" />
+				<input type="hidden" name="sgId" id="sgId" />
+				<input type="hidden" name="services" id="services" />
+				<input type="hidden" name="name" id="name" />
+				<input type="hidden" name="email" id="email" />
+				<input type="hidden" name="phone" id="phone" />
+			</form>
+		</div>
+		<div data-role="footer">
+			<h4>APTRA Scheduler</h4>
+		</div>
+	</div>
+</body>
+</html>

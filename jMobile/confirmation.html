@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>APTRA Scheduler</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
+<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
+<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.10.0/jquery.validate.min.js"></script>
+<script type="text/javascript" src="js/aptrascheduler.js"></script>
+
+<script type="text/javascript">
+	$("#confPage").live("pageshow",
+		function() {
+			var params = getParams(window.location.href);
+			var locId = params['locId'];
+			var sgId = params['sgId'];
+			var services = params['services'];
+			var name = params['name'];
+			var email = (params['email']!=""?params['email']:"NA");
+			var phone = (params['phone']!=""?params['phone']:"1");
+			var time = params['time'];
+			
+			var pStr = locId + "/" + sgId + "/" + services + "/" + name + "/" + email + "/" + phone + "/" + time;
+			
+			$.mobile.showPageLoadingMsg();
+			$.get("http://localhost:8082/spring-ws-client/dispatcher/showConfirmation/" + pStr, {}, function(data) {
+				$.mobile.hidePageLoadingMsg();
+				var s = "<p><h2>" + data + "</h2></p>";
+				s += "<p><a href='index.html' data-role='button' data-theme='b' rel='external'>Home</a></p>";
+				$("#confContent").html(s);
+				$(".ui-page").trigger("create"); 
+			});
+	});
+</script>
+</head>
+<body>
+	<div data-role="page" id="confPage">
+		<div data-role="header">
+			<h1>APTRA Scheduler</h1>
+		</div>
+		<div data-role="content" id="confContent">
+		</div>
+		<div data-role="footer">
+			<h4>APTRA Scheduler</h4>
+		</div>
+	</div>
+</body>
+</html>
